@@ -1,0 +1,22 @@
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  creationTimestamp: null
+  labels:
+    app.kubernetes.io/created-by: application-service
+    app.kubernetes.io/instance: dex-quality-dashboard-i8vr
+    app.kubernetes.io/managed-by: kustomize
+    app.kubernetes.io/name: dex-quality-dashboard-i8vr
+    app.kubernetes.io/part-of: mc-quality-dashboard
+  name: dex-quality-dashboard-i8vlglu
+spec:
+  port:
+    targetPort: 5556
+  tls:
+    insecureEdgeTerminationPolicy: Redirect
+    termination: edge
+  to:
+    kind: Service
+    name: dex-quality-dashboard-i8vr
+    weight: 100
+status: {}
