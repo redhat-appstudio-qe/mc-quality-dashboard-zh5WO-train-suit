@@ -1,0 +1,75 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    argocd.argoproj.io/sync-wave: "0"
+  creationTimestamp: null
+  labels:
+    app: quality-dashboard
+    app.kubernetes.io/component: quality-frontend
+    app.kubernetes.io/created-by: application-service
+    app.kubernetes.io/instance: frontend-quality-dashboard-zsbk
+    app.kubernetes.io/managed-by: kustomize
+    app.kubernetes.io/name: frontend-quality-dashboard-zsbk
+    app.kubernetes.io/part-of: mc-quality-dashboard
+    component: quality-frontend
+  name: frontend-quality-dashboard-zsbk
+spec:
+  replicas: 1
+  revisionHistoryLimit: 0
+  selector:
+    matchLabels:
+      app: quality-dashboard
+      app.kubernetes.io/instance: frontend-quality-dashboard-zsbk
+      component: quality-frontend
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: quality-dashboard
+        app.kubernetes.io/component: quality-frontend
+        app.kubernetes.io/instance: frontend-quality-dashboard-zsbk
+        app.kubernetes.io/name: quality-dashboard
+        component: quality-frontend
+    spec:
+      containers:
+      - env:
+        - name: REACT_APP_API_SERVER_URL
+          valueFrom:
+            secretKeyRef:
+              key: backend-route
+              name: frontend-secrets
+        - name: FRONTEND_REDIRECT_URI
+          valueFrom:
+            secretKeyRef:
+              key: frontend-route
+              name: frontend-secrets
+        - name: DEX_ISSUER
+          valueFrom:
+            secretKeyRef:
+              key: dex-issuer
+              name: quality-dashboard-secrets
+        - name: DEX_APPLICATION_ID
+          valueFrom:
+            secretKeyRef:
+              key: dex-application-id
+              name: quality-dashboard-secrets
+        image: quay.io/flacatus/qs-frontend:latest
+        imagePullPolicy: Always
+        name: quality-frontend-dashboard
+        ports:
+        - containerPort: 9000
+          name: http
+          protocol: TCP
+        - containerPort: 8080
+        resources:
+          limits:
+            cpu: 500m
+            memory: 1Gi
+          requests:
+            cpu: 200m
+            memory: 512Mi
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
+status: {}
