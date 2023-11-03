@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: quality-authenticator
+    app.kubernetes.io/created-by: application-service
+    app.kubernetes.io/instance: dex-quality-dashboard-i8vr
+    app.kubernetes.io/managed-by: kustomize
+    app.kubernetes.io/name: dex-quality-dashboard-i8vr
+    app.kubernetes.io/part-of: mc-quality-dashboard
+    component: dex
+  name: dex-quality-dashboard-i8vr
+spec:
+  replicas: 1
+  revisionHistoryLimit: 0
+  selector:
+    matchLabels:
+      app: quality-authenticator
+      app.kubernetes.io/instance: dex-quality-dashboard-i8vr
+      component: dex
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: quality-authenticator
+        app.kubernetes.io/instance: dex-quality-dashboard-i8vr
+        component: dex
+    spec:
+      containers:
+      - command:
+        - /usr/local/bin/dex
+        - serve
+        - /etc/dex/cfg/config.yaml
+        image: ghcr.io/dexidp/dex:v2.36.0
+        name: dex
+        ports:
+        - containerPort: 5555
+          name: http
+        - containerPort: 5556
+        resources:
+          limits:
+            cpu: 500m
+            memory: 256Mi
+          requests:
+            cpu: 200m
+            memory: 128Mi
+        volumeMounts:
+        - mountPath: /etc/dex/cfg
+          name: config
+      volumes:
+      - name: config
+        secret:
+          items:
+          - key: config.yaml
+            path: config.yaml
+          secretName: dex-config
+status: {}
